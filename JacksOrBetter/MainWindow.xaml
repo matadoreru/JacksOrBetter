@@ -1,0 +1,138 @@
+﻿<Window x:Class="JacksOrBetter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JacksOrBetter"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d"
+        Title="Jack Or Better" Height="450" Width="800">
+    <DockPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                
+                <Image Grid.Row="0" Margin="5" Source="/Recursos/img/1.png"
+                       MouseMove="Image_MouseMove"
+                       Tag="1"/>
+                <Image Grid.Row="1" Margin="5" Source="/Recursos/img/2.png"
+                       MouseMove="Image_MouseMove"
+                       Tag="2"/>
+                <Image Grid.Row="2" Margin="5" Source="/Recursos/img/3.png"
+                       MouseMove="Image_MouseMove"
+                       Tag="3"/>
+                <Image Grid.Row="3" Margin="5" Source="/Recursos/img/4.png"
+                       MouseMove="Image_MouseMove"
+                       Tag="4"/>
+                <Image Grid.Row="4" Margin="5" Source="/Recursos/img/5.png"
+                       MouseMove="Image_MouseMove"
+                       Tag="5"/>
+
+                <materialDesign:Card Grid.Row="5">
+                    <TextBlock x:Name="tbExtra" Text="Vols fer una ronda extra?" FontSize="10" HorizontalAlignment="Center"/>
+                </materialDesign:Card>
+                <Button  x:Name="btnDuplicar" Grid.Row="6" Content="Duplicar" Margin="5" VerticalAlignment="Center"
+                         Click="btnDuplicar_Click"/>
+                <Button  x:Name="btnSemiDuplicar" Grid.Row="7" Content="Semi-Duplicar" Margin="5" VerticalAlignment="Center"
+                         Click="btnSemiDuplicar_Click"/>
+
+            </Grid>
+            
+            <Grid x:Name="gridMa" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:Card Grid.Column="0" Padding="5" Margin="0,0,5,0">
+                        <TextBlock Text="Apostar:" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </materialDesign:Card>
+                    <materialDesign:Card Grid.Column="1" Padding="5">
+                        <TextBlock x:Name="tbApostar" Text="0" FontSize="15" VerticalAlignment="Center"
+                               Drop="tbApostar_Drop" AllowDrop="True"/>
+                    </materialDesign:Card>
+                </Grid>
+                
+            </Grid>
+            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="btnRepartir" Grid.Column="0"
+                        Content="Reparteix cartes" Margin="5" FontSize="20" Click="btnRepartir_Click"/>
+
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Click="btnAgregar_Click" Tag="1"  Grid.Column="0" Margin="5" Content="1€"/>
+                    <Button Click="btnAgregar_Click" Tag="2" Grid.Column="1" Margin="5" Content="2€"/>
+                    <Button Click="btnAgregar_Click" Tag="3" Grid.Column="2" Margin="5" Content="3€"/>
+                    <Button Click="btnAgregar_Click" Tag="4" Grid.Column="3" Margin="5" Content="4€"/>
+                    <Button Click="btnAgregar_Click" Tag="5" Grid.Column="4" Margin="5" Content="5€"/>
+                </Grid>
+                
+                <materialDesign:Card Grid.Column="2" Padding="5" Margin="5,15,5,15">
+                    <TextBlock FontSize="15" Text="Credit: " VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="3" Padding="5" Margin="5,15,5,15">
+                    <TextBlock x:Name="tbCredito" FontSize="15" Text="100"
+                               VerticalAlignment="Center"/>
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+    </DockPanel>
+    
+</Window>
