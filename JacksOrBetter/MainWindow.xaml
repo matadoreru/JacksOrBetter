@@ -14,7 +14,40 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
         Title="Jack Or Better" Height="450" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding x:Name="cmdAgregar" Command="local:CommandsPoker.Agregar" Executed="cmdAgregar_Executed" CanExecute="cmdAgregar_CanExecute"/>
+        <CommandBinding x:Name="cmdReparteix" Command="local:CommandsPoker.Reparteix" Executed="cmdReparteix_Executed" CanExecute="cmdReparteix_CanExecute"/>
+        <CommandBinding x:Name="cmdDuplicar" Command="local:CommandsPoker.Duplicar" Executed="cmdDuplicar_Executed" CanExecute="cmdDuplicar_CanExecute"/>
+        <CommandBinding x:Name="cmdSemiduplicar" Command="local:CommandsPoker.Semiduplicar" Executed="cmdSemiDuplicar_Executed" CanExecute="cmdSemiduplicar_CanExecute"/>
+    </Window.CommandBindings>
     <DockPanel>
+        <ToolBar DockPanel.Dock="Bottom">
+            <Button Content="Reparteix/Descartar" Name="btnReparteix2" Command="local:CommandsPoker.Reparteix" FontSize="12"/>
+            <Button Content="Agregar 1" Name="btnAgregar1" Command="local:CommandsPoker.Agregar" CommandParameter="1" FontSize="11"/>
+            <Button Content="Agregar 2" Name="btnAgregar2" Command="local:CommandsPoker.Agregar" CommandParameter="2" FontSize="11"/>
+            <Button Content="Agregar 3" Name="btnAgregar3" Command="local:CommandsPoker.Agregar" CommandParameter="3" FontSize="11"/>
+            <Button Content="Agregar 4" Name="btnAgregar4" Command="local:CommandsPoker.Agregar" CommandParameter="4" FontSize="11"/>
+            <Button Content="Agregar 5" Name="btnAgregar5" Command="local:CommandsPoker.Agregar" CommandParameter="5" FontSize="11"/>
+            <Button Content="Duplicar" Name="btnDuplicar2" Command="local:CommandsPoker.Duplicar" FontSize="11"/>
+            <Button Content="Semiduplicar" Name="btnSemiduplicar2" Command="local:CommandsPoker.Semiduplicar" FontSize="11"/>
+        </ToolBar>
+
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Ronda Principal">
+                <MenuItem Header="_Reparteix/Descartar" Command="local:CommandsPoker.Reparteix"/>
+            </MenuItem>
+            <MenuItem Header="Agregar">
+                <MenuItem Header="_Agregar 1" Command="local:CommandsPoker.Agregar" CommandParameter="1"/>
+                <MenuItem Header="_Agregar 2" Command="local:CommandsPoker.Agregar" CommandParameter="2"/>
+                <MenuItem Header="_Agregar 3" Command="local:CommandsPoker.Agregar" CommandParameter="3"/>
+                <MenuItem Header="_Agregar 4" Command="local:CommandsPoker.Agregar" CommandParameter="4"/>
+                <MenuItem Header="_Agregar 5" Command="local:CommandsPoker.Agregar" CommandParameter="5"/>
+            </MenuItem>
+            <MenuItem Header="Ronda Extra">
+                <MenuItem Header="_Duplicar" Command="local:CommandsPoker.Duplicar"/>
+                <MenuItem Header="_Semiduplicar" Command="local:CommandsPoker.Semiduplicar"/>
+            </MenuItem>
+        </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*"/>
@@ -58,9 +91,9 @@
                     <TextBlock x:Name="tbExtra" Text="Vols fer una ronda extra?" FontSize="10" HorizontalAlignment="Center"/>
                 </materialDesign:Card>
                 <Button  x:Name="btnDuplicar" Grid.Row="6" Content="Duplicar" Margin="5" VerticalAlignment="Center"
-                         Click="btnDuplicar_Click"/>
+                         Command="local:CommandsPoker.Duplicar"/>
                 <Button  x:Name="btnSemiDuplicar" Grid.Row="7" Content="Semi-Duplicar" Margin="5" VerticalAlignment="Center"
-                         Click="btnSemiDuplicar_Click"/>
+                         Command="local:CommandsPoker.Semiduplicar"/>
 
             </Grid>
             
@@ -105,7 +138,8 @@
                 </Grid.ColumnDefinitions>
 
                 <Button x:Name="btnRepartir" Grid.Column="0"
-                        Content="Reparteix cartes" Margin="5" FontSize="20" Click="btnRepartir_Click"/>
+                        Command="local:CommandsPoker.Reparteix"
+                        Content="Reparteix/Descarta cartes" Margin="5" FontSize="18"/>
 
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -116,18 +150,18 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Click="btnAgregar_Click" Tag="1"  Grid.Column="0" Margin="5" Content="1€"/>
-                    <Button Click="btnAgregar_Click" Tag="2" Grid.Column="1" Margin="5" Content="2€"/>
-                    <Button Click="btnAgregar_Click" Tag="3" Grid.Column="2" Margin="5" Content="3€"/>
-                    <Button Click="btnAgregar_Click" Tag="4" Grid.Column="3" Margin="5" Content="4€"/>
-                    <Button Click="btnAgregar_Click" Tag="5" Grid.Column="4" Margin="5" Content="5€"/>
+                    <Button Command="local:CommandsPoker.Agregar" CommandParameter="1"  Grid.Column="0" Margin="5" Content="1€"/>
+                    <Button Command="local:CommandsPoker.Agregar" CommandParameter="2" Grid.Column="1" Margin="5" Content="2€"/>
+                    <Button Command="local:CommandsPoker.Agregar" CommandParameter="3" Grid.Column="2" Margin="5" Content="3€"/>
+                    <Button Command="local:CommandsPoker.Agregar" CommandParameter="4" Grid.Column="3" Margin="5" Content="4€"/>
+                    <Button Command="local:CommandsPoker.Agregar" CommandParameter="5" Grid.Column="4" Margin="5" Content="5€"/>
                 </Grid>
                 
-                <materialDesign:Card Grid.Column="2" Padding="5" Margin="5,15,5,15">
+                <materialDesign:Card Grid.Column="2" Padding="5" Margin="5">
                     <TextBlock FontSize="15" Text="Credit: " VerticalAlignment="Center"
                                HorizontalAlignment="Center"/>
                 </materialDesign:Card>
-                <materialDesign:Card Grid.Column="3" Padding="5" Margin="5,15,5,15">
+                <materialDesign:Card Grid.Column="3" Padding="5" Margin="5">
                     <TextBlock x:Name="tbCredito" FontSize="15" Text="100"
                                VerticalAlignment="Center"/>
                 </materialDesign:Card>

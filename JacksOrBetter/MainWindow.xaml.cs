@@ -25,11 +25,11 @@ namespace JacksOrBetter
         Ma ma = new Ma();
         Carta cartaRandom;
         bool cartesMostrades = false;
-        int nRondaExtra = 0;
+        bool repartirDescartar = false;
         bool cartesMostrades2Ronda = false;
         bool haGuanyat = false;
         bool segondaRonda = false;
-
+        int nRondaExtra = 0;
         int ganancies;
 
         public MainWindow()
@@ -76,54 +76,146 @@ namespace JacksOrBetter
             }
         }
 
-        private void btnRepartir_Click(object sender, RoutedEventArgs e)
+        // Commands
+        private void cmdAgregar_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            // Mira si el jugador no ha apostat diners
-            if(Convert.ToInt32(tbApostar.Text) == 0)
+            int agregar = Int32.Parse(e.Parameter.ToString());
+            tbExtra.Visibility = Visibility.Collapsed;
+            btnDuplicar.Visibility = Visibility.Collapsed;
+            btnSemiDuplicar.Visibility = Visibility.Collapsed;
+            if (segondaRonda)
             {
-
-            } 
+                tbApostar.Text = "0";
+                ResetGame(gridMa);
+                segondaRonda = false;
+            }
+            if (haGuanyat)
+            {
+                tbCredito.Text = (Convert.ToInt32(tbCredito.Text) + ganancies).ToString();
+                haGuanyat = false;
+            }
             else
             {
-                // Si encara no s'han mostrat les cartes
-                if (!cartesMostrades)
+                if (Convert.ToInt32(tbApostar.Text) + agregar == 5)
                 {
-                    baralla = new Baralla();
-                    baralla.Barrejar();
-                    ma = new Ma();
-                    AfegirCartesMa(true);
-                    ActualitzarGridImage(gridMa);
-                    cartesMostrades = true;
+                    tbCredito.Text = Convert.ToString(Convert.ToInt32(tbCredito.Text) - agregar);
+                    tbApostar.Text = Convert.ToString(agregar + Convert.ToInt32(tbApostar.Text));
+                    cmdReparteix_Executed(sender, e);
                 }
-                else
+                else if (Convert.ToInt32(tbApostar.Text) + agregar < 5)
                 {
-                    #region Posar noves cartes
-                    int nElim = 0;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Carta carta = ma[i];
-                        if (!carta.CaraAmunt)
-                        {
-                            Carta cartaNova = baralla.Roba();
-                            cartaNova.CaraAmunt = true;
-                            ma[i] = cartaNova;
-                        }
-                    }
-                    ActualitzarGridImage(gridMa);
-                    #endregion
-
-                    ganancies = CheckHaGuanyat1r(ma);
-                    if (haGuanyat)
-                    {
-                        tbExtra.Visibility = Visibility.Visible;
-                        btnDuplicar.Visibility = Visibility.Visible;
-                        btnSemiDuplicar.Visibility = Visibility.Visible;
-                    }
-                    cartesMostrades = false;
-                    tbApostar.Text = "0";
+                    tbCredito.Text = Convert.ToString(Convert.ToInt32(tbCredito.Text) - agregar);
+                    tbApostar.Text = Convert.ToString(agregar + Convert.ToInt32(tbApostar.Text));
                 }
-            }       
+            }
         }
+
+        private void cmdAgregar_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !repartirDescartar;
+        }
+
+        private void cmdReparteix_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            repartirDescartar = true;
+            // Si encara no s'han mostrat les cartes
+            if (!cartesMostrades)
+            {
+                baralla = new Baralla();
+                baralla.Barrejar();
+                ma = new Ma();
+                AfegirCartesMa(true);
+                ActualitzarGridImage(gridMa);
+                cartesMostrades = true;
+            }
+            else
+            {
+                #region Posar noves cartes
+                int nElim = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    Carta carta = ma[i];
+                    if (!carta.CaraAmunt)
+                    {
+                        Carta cartaNova = baralla.Roba();
+                        cartaNova.CaraAmunt = true;
+                        ma[i] = cartaNova;
+                    }
+                }
+                ActualitzarGridImage(gridMa);
+                #endregion
+
+                ganancies = CheckHaGuanyat1r(ma);
+                if (haGuanyat)
+                {
+                    tbExtra.Visibility = Visibility.Visible;
+                    btnDuplicar.Visibility = Visibility.Visible;
+                    btnSemiDuplicar.Visibility = Visibility.Visible;
+                }
+                cartesMostrades = false;
+                repartirDescartar = false;
+                tbApostar.Text = "0";
+            }
+            
+        }
+
+        private void cmdReparteix_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            // Mira si el jugador no ha apostat diners
+            if (tbApostar != null)
+                e.CanExecute = Convert.ToInt32(tbApostar.Text) != 0 && !segondaRonda;
+            else
+                e.CanExecute = false;
+        }
+
+        private void cmdDuplicar_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            haGuanyat = false;
+            segondaRonda = true;
+            tbApostar.Text = ganancies.ToString();
+            ResetGame(gridMa);
+            RondaExtra();
+        }
+
+        private void cmdDuplicar_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = haGuanyat;
+        }
+
+        private void cmdSemiDuplicar_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            haGuanyat = false;
+            segondaRonda = true;
+            ResetGame(gridMa);
+            tbApostar.Text = (ganancies / 2).ToString();
+            RondaExtra();
+        }
+
+        private void cmdSemiduplicar_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = haGuanyat;
+        }
+
+        #region DragAndDrop
+        private void tbApostar_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                this.cmdAgregar.Command.Execute(e.Data.GetData(DataFormats.Text).ToString());
+            }
+        }
+
+        private void Image_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragDrop.DoDragDrop((Image)sender, ((Image)sender).Tag, DragDropEffects.Move);
+            }
+        }
+
+        #endregion
+
+        #region Funciones Privades
 
         /// <summary>
         /// Mira si ha guanyat el jugador i mostra el resultat
@@ -206,7 +298,7 @@ namespace JacksOrBetter
                 ganancies = 0;
                 MessageBox.Show("Has empetat, ronda cancelada, ni guanyes, ni perds diners");
             }
-            else if(compare > 0)
+            else if (compare > 0)
             {
                 ganancies = Convert.ToInt32(tbApostar.Text) * 2;
                 MessageBox.Show("Has guanyat!, dupliques els teus diners guanyats!");
@@ -225,7 +317,7 @@ namespace JacksOrBetter
         /// <param name="caraAmunt"></param>
         private void AfegirCartesMa(bool caraAmunt)
         {
-            if(caraAmunt)
+            if (caraAmunt)
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -240,7 +332,7 @@ namespace JacksOrBetter
                     ma.Afegeix(baralla.Roba());
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -282,95 +374,15 @@ namespace JacksOrBetter
             btnSemiDuplicar.Visibility = Visibility.Collapsed;
         }
 
-        private void btnAgregar_Click(object sender, RoutedEventArgs e)
-        {
-            Button btn = (Button)sender;
-            tbExtra.Visibility = Visibility.Collapsed;
-            btnDuplicar.Visibility = Visibility.Collapsed;
-            btnSemiDuplicar.Visibility = Visibility.Collapsed;
-            if(segondaRonda)
-            {
-                tbApostar.Text = "0";
-                ResetGame(gridMa);
-                segondaRonda = false;
-            }
-            if(haGuanyat)
-            {
-                tbCredito.Text = (Convert.ToInt32(tbCredito.Text) + ganancies).ToString();
-                haGuanyat = false;
-            }
-            else
-            {
-                if (Convert.ToInt32(tbApostar.Text) + Convert.ToInt32(btn.Tag) == 5)
-                {
-                    tbCredito.Text = Convert.ToString(Convert.ToInt32(tbCredito.Text) - Convert.ToInt32(btn.Tag));
-                    tbApostar.Text = Convert.ToString(Convert.ToInt32(btn.Tag) + Convert.ToInt32(tbApostar.Text));
-                    btnRepartir_Click(sender, e);
-                }
-                else if (Convert.ToInt32(tbApostar.Text) + Convert.ToInt32(btn.Tag) < 5)
-                {
-                    tbCredito.Text = Convert.ToString(Convert.ToInt32(tbCredito.Text) - Convert.ToInt32(btn.Tag));
-                    tbApostar.Text = Convert.ToString(Convert.ToInt32(btn.Tag) + Convert.ToInt32(tbApostar.Text));
-                }
-            }   
-        }
-
-        #region DragAndDrop
-        private void tbApostar_Drop(object sender, DragEventArgs e)
-        {     
-            if (e.Data.GetDataPresent(DataFormats.Text))
-            {
-                TextBlock tb = (TextBlock)sender;
-                String cadena = e.Data.GetData(DataFormats.Text).ToString();
-                if (Convert.ToInt32(tbApostar.Text) + Convert.ToInt32(cadena) == 5)
-                {
-                    tbCredito.Text = Convert.ToString(Convert.ToInt32(tbCredito.Text) - Convert.ToInt32(cadena));
-                    tbApostar.Text = Convert.ToString(Convert.ToInt32(cadena) + Convert.ToInt32(tbApostar.Text));
-                    btnRepartir_Click(sender, e);
-                }
-                else if (Convert.ToInt32(tbApostar.Text) + Convert.ToInt32(cadena) < 5)
-                {
-                    tbCredito.Text = Convert.ToString(Convert.ToInt32(tbCredito.Text) - Convert.ToInt32(cadena));
-                    tbApostar.Text = Convert.ToString(Convert.ToInt32(cadena) + Convert.ToInt32(tbApostar.Text));
-                }
-            }
-        } 
-
-        private void Image_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragDrop.DoDragDrop((Image)sender, ((Image)sender).Tag, DragDropEffects.Move);
-            }
-        }
-
-        #endregion
-
-        private void btnSemiDuplicar_Click(object sender, RoutedEventArgs e)
-        {
-            segondaRonda = true;
-            ResetGame(gridMa);
-            tbApostar.Text = (ganancies / 2).ToString();
-            RondaExtra();
-        }
-
-        private void btnDuplicar_Click(object sender, RoutedEventArgs e)
-        {
-            segondaRonda = true;
-            tbApostar.Text = ganancies.ToString();
-            ResetGame(gridMa);
-            RondaExtra();
-        }
-
         private void RondaExtra()
         {
-            btnDuplicar.IsEnabled = false;
-            btnSemiDuplicar.IsEnabled = false;
-            btnRepartir.IsEnabled = false;
             AfegirCartesMa(false);
             cartaRandom = ma[random.Next(0, 5)];
             cartaRandom.CaraAmunt = true;
             ActualitzarGridImage(gridMa);
         }
+
+        #endregion
+
     }
 }
